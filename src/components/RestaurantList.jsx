@@ -1,71 +1,37 @@
-import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import PropTypes from "prop-types"
+import 'leaflet/dist/leaflet.css';
 
-const RestaurantList = ({ restaurants, onRestaurantSelect }) => {
-    function Navbar() {
-        return (
-          <header>
-            <nav>
-              <a>
-                <h2>Yelp</h2>
-              </a>
-      
-              <ul>
-                <form action="/" method="get">
-                  <label htmlFor="header-search-restaurants">
-                    <span className="visually-hidden">Search blog posts</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="header-search"
-                    placeholder="find: burgers, pizza..."
-                    name="s"
-                  />
-                </form>
-                <form action="/" method="get">
-                  <label htmlFor="location">
-                    <span className="visually-hidden">Search blog posts</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="header-search"
-                    placeholder="find: places"
-                    name="s"
-                  />
-                  <button type="submit">Search</button>
-                </form>
-              </ul>
-            </nav>
-          </header>
-        );
-      }
+const RestaurantList = ({ restaurants, onRestaurantSelect, selectedTag, selectedCity }) => {
+
+  const filteredRestaurants = restaurants.filter(restaurant => {
+    if (
+      (!selectedTag && restaurant.tags.includes(selectedTag)) &&
+      (!selectedCity && restaurant.city === selectedCity)
+    ) {
+      return true;
+    }
+    return false;
+  });
 
   return (
     <div className="restaurant-list">
-      <div className="restaurant-map">
-        <MapContainer center={[40.7128, -74.0060]} zoom={13} style={{ height: '400px' }}>
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {restaurants.map((restaurant, index) => (
-            <Marker
-              key={restaurant.id}
-              position={[restaurant.latitude, restaurant.longitude]}
-              eventHandlers={{
-                click: () => onRestaurantSelect(restaurant)
-              }}
-            >
-              <Popup>{restaurant.name}</Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      </div>
+      {restaurants.map((restaurant) => <div key={restaurant.id}>{restaurant.name}</div>)}
 
       <div className="restaurant-items">
-        {restaurants.map((restaurant, index) => (
-          <div key={restaurant.id}>{restaurant.name}</div>
+        {filteredRestaurants.map(restaurant => (
+          <div key={restaurant.id}>{restaurant.name} {restaurant.tags.map((tag, index) => (<div key={index}>{tag}</div>))}</div>
         ))}
       </div>
     </div>
   );
 };
+
+
+RestaurantList.propTypes = {
+  restaurants: PropTypes.array,
+  onRestaurantSelect: PropTypes.func,
+  selectedTag: PropTypes.string,
+  selectedCity: PropTypes.string
+}
 
 export default RestaurantList;

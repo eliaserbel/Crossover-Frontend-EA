@@ -4,12 +4,13 @@
 // const apiURL = import.meta.env.VITE_API_URL;
 
 class Restaurant {
-    constructor(id, name, latitude, longitude, adress) {
+    constructor(id, name, latitude, longitude, adress, tags) {
         this.id = id;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = adress;
+        this.tags = tags
     }
 }
 
@@ -21,12 +22,18 @@ export const getRestaurants = async () => {
                 restaurant.name,
                 restaurant.latitude,
                 restaurant.longitude,
-                `${restaurant.address.number}, ${restaurant.address.street}, ${restaurant.address.city}, ${restaurant.address.state} ` 
+                `${restaurant.address.number}, ${restaurant.address.street}, ${restaurant.address.city}, ${restaurant.address.state} `,
+                restaurant.tags 
             ))
 }
 
 function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export const getSearch = async (tag) => {
+    await timeout(0);
+    return restaurantsMock.filter((restaurant) => restaurant.tags.includes(tag))
 }
 
 
@@ -58,7 +65,8 @@ const restaurantsMock = [
             number: "1234",
             city: "City",
             state: "State"
-        }
+        },
+        tags: ["indian", "japanese"]
     },
     {
         id: 2,
@@ -70,5 +78,7 @@ const restaurantsMock = [
             number: "1234",
             city: "City",
             state: "State"
-        }    },
+        },
+        tags: ["chinese", "japanese"]
+    },
 ];
